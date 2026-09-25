@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welcome, Houria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#E4527B; --pink-deep:#C23A66; --pink-pale:#FBDCE6;
+    --ink:#3B2036; --muted:#8A6B78; --card:#FFFFFF; --gold:#C99A3E;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --card:#2E2129; --ink:#F5E9EE; --pink-pale:#4A2E3B; --muted:#C9A9B5; }
+  }
+  :root[data-theme="dark"]{ --card:#2E2129; --ink:#F5E9EE; --pink-pale:#4A2E3B; --muted:#C9A9B5; }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100%; color:var(--ink);
+    font-family:"Work Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    display:flex; justify-content:center; align-items:flex-start; padding:40px 18px;
+    background:linear-gradient(180deg,#5B3559 0%,#9C5580 45%,#F0AFC7 100%);
+    position:relative; overflow-x:hidden;
+  }
+  .moon{
+    position:fixed; top:8%; right:8%; width:110px; height:110px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #FFFBEA 0%, #FFEFC4 40%, #F4D48C 75%, #E9C170 100%);
+    box-shadow:0 0 50px 18px rgba(255,236,180,.35);
+    z-index:0;
+  }
+  .moon::before, .moon::after{
+    content:''; position:absolute; border-radius:50%; background:rgba(180,140,90,.18);
+  }
+  .moon::before{ width:22px; height:22px; top:20px; left:18px; }
+  .moon::after{ width:14px; height:14px; bottom:22px; right:20px; }
+  .card{
+    width:100%; max-width:560px; background:var(--card);
+    border:1px solid var(--pink-pale); border-radius:18px;
+    padding:40px 36px 34px; position:relative; z-index:1;
+  }
+  .steps{display:flex; gap:6px; margin-bottom:28px;}
+  .dot{height:4px; flex:1; background:var(--pink-pale); border-radius:2px; transition:background .3s;}
+  .dot.done{background:var(--pink);}
+  h1{ font-family:"Fraunces",Georgia,serif; font-weight:600; font-style:italic; font-size:1.7rem; line-height:1.25; margin:0 0 10px; }
+  .eyebrow{font-size:.82rem; color:var(--muted); margin:0 0 6px;}
+  p.lede{color:var(--muted); line-height:1.55; margin:0 0 26px; font-size:.98rem;}
+  .screen{display:none;} .screen.active{display:block;}
+  textarea{ width:100%; min-height:120px; resize:vertical; border:1px solid var(--pink-pale); border-radius:10px; padding:13px 14px; font-family:inherit; font-size:.97rem; color:var(--ink); background:transparent; line-height:1.5; }
+  textarea:focus{outline:2px solid var(--pink); outline-offset:1px;}
+  .riddle{ background:var(--pink-pale); border-radius:12px; padding:18px 20px; margin-bottom:18px; font-family:"Fraunces",Georgia,serif; font-size:1.05rem; line-height:1.6; font-style:italic; }
+  .reveal-btn{ background:none; border:1px solid var(--pink); color:var(--pink); padding:8px 16px; border-radius:20px; font-size:.85rem; cursor:pointer; font-family:"Work Sans",sans-serif; margin-bottom:10px; }
+  .answer{display:none; font-size:.92rem; color:var(--gold); margin:0 0 4px; font-weight:600;} .answer.shown{display:block;}
+  .riddle-input{ width:100%; border:none; border-bottom:1px solid var(--pink-pale); background:transparent; padding:8px 2px; font-family:"Work Sans",sans-serif; font-size:.95rem; color:var(--ink); }
+  .riddle-input:focus{outline:none; border-bottom-color:var(--pink);}
+  .nav{display:flex; justify-content:space-between; margin-top:28px; gap:10px;}
+  button.primary, button.ghost{ font-family:"Work Sans",sans-serif; font-weight:600; font-size:.92rem; padding:11px 22px; border-radius:24px; cursor:pointer; border:none; }
+  button.primary{background:var(--pink); color:#fff;} button.primary:hover{opacity:.9;}
+  button.ghost{background:transparent; color:var(--muted); border:1px solid var(--pink-pale);}
+  .start-btn{ background:var(--pink); color:#fff; border:none; padding:13px 26px; border-radius:26px; font-family:"Work Sans",sans-serif; font-weight:600; font-size:.95rem; cursor:pointer; }
+  .guide-list{list-style:none; margin:0 0 26px; padding:0;}
+  .guide-list li{ padding:10px 0 10px 22px; border-bottom:1px solid var(--pink-pale); position:relative; font-size:.95rem; line-height:1.5; }
+  .guide-list li:last-child{border-bottom:none;}
+  .guide-list li::before{ content:'♡'; position:absolute; left:0; top:9px; color:var(--pink); font-size:.9rem; }
+  .guide-list b{color:var(--pink-deep);}
+  .summary{white-space:pre-wrap; background:var(--pink-pale); border-radius:12px; padding:16px 18px; font-size:.88rem; line-height:1.6; color:var(--ink);}
+  .copy-btn{margin-top:14px;}
+  .copied{font-size:.82rem; color:var(--pink); margin-top:8px; display:none;}
+  /* welcome name reveal + firework + flowers */
+  .name-wrap{position:relative; height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:6px;}
+  .name-wrap h1{position:relative; z-index:2; font-size:2.1rem; text-align:center; margin:0;}
+  .name-wrap .highlight{color:var(--pink-deep);}
+  .burst{position:absolute; left:50%; top:50%; width:6px; height:6px; border-radius:50%; opacity:0; z-index:1;}
+  .ignite .burst{animation:burst 1s ease-out forwards;}
+  @keyframes burst{
+    0%{ opacity:1; transform:translate(-50%,-50%) rotate(var(--ang)) translateX(0) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-50%) rotate(var(--ang)) translateX(90px) scale(.3); }
+  }
+  .flower{position:absolute; font-size:1.4rem; opacity:0; z-index:1; transform:scale(0) rotate(-30deg);}
+  .ignite .flower{animation:bloom .7s ease-out forwards;}
+  @keyframes bloom{ 0%{opacity:0; transform:scale(0) rotate(-30deg);} 60%{opacity:1; transform:scale(1.15) rotate(8deg);} 100%{opacity:1; transform:scale(1) rotate(0deg);} }
+</style>
+</head>
+<body>
+<div class="moon"></div>
+<div class="card">
+
+  <div id="screen-0" class="screen active">
+    <p class="eyebrow">From Hung, with a little nervousness</p>
+    <div class="name-wrap" id="nameWrap">
+      <h1>Welcome, <span class="highlight">Houria</span></h1>
+    </div>
+    <p class="lede" style="text-align:center;">A little questionnaire, made just for you. Two riddles to warm up, then a few honest questions about us.</p>
+    <div style="text-align:center;"><button class="start-btn" onclick="goTo(1)">Begin</button></div>
+  </div>
+
+  <div id="screen-1" class="screen">
+    <p class="eyebrow">Before we start</p>
+    <h1 style="font-size:1.4rem;">A few ground rules</h1>
+    <ul class="guide-list">
+      <li><b>Be honest.</b> This only means something if it's true, not flattering.</li>
+      <li><b>Be constructive.</b> If something bothers you, say it in a way I can actually act on.</li>
+      <li><b>Take your time.</b> There's no clock here — write as much or as little as feels right.</li>
+      <li><b>Be kind to yourself.</b> There are no wrong answers, only honest ones.</li>
+    </ul>
+    <div class="nav"><button class="ghost" onclick="goTo(0)">Back</button><button class="primary" onclick="goTo(2)">Next</button></div>
+  </div>
+
+  <div id="screen-2" class="screen">
+    <div class="steps" id="steps2"></div>
+    <p class="eyebrow">Warm-up · Riddle 1 of 2</p>
+    <div class="riddle">The more of it you give away, the more you end up holding. It costs nothing to offer, yet it's the easiest thing in the world to break. What is it?</div>
+    <input class="riddle-input" placeholder="Your guess..." id="r1-guess"><br>
+    <button class="reveal-btn" onclick="reveal(1)">Reveal answer</button>
+    <p class="answer" id="r1-answer">Trust.</p>
+    <div class="nav"><button class="ghost" onclick="goTo(1)">Back</button><button class="primary" onclick="goTo(3)">Next</button></div>
+  </div>
+
+  <div id="screen-3" class="screen">
+    <div class="steps" id="steps3"></div>
+    <p class="eyebrow">Warm-up · Riddle 2 of 2</p>
+    <div class="riddle">Two people can live inside me, though I have no walls, no roof, and no door. Once you cross into me, you never fully leave — even if you try. What am I?</div>
+    <input class="riddle-input" placeholder="Your guess..." id="r2-guess"><br>
+    <button class="reveal-btn" onclick="reveal(2)">Reveal answer</button>
+    <p class="answer" id="r2-answer">A heart.</p>
+    <div class="nav"><button class="ghost" onclick="goTo(2)">Back</button><button class="primary" onclick="goTo(4)">Next</button></div>
+  </div>
+
+  <div id="screen-4" class="screen">
+    <div class="steps" id="steps4"></div>
+    <p class="eyebrow">Question 1 of 4</p>
+    <h1 style="font-size:1.25rem;">What do you like most about how Hung interacts with you?</h1>
+    <p class="lede">Give an example or two, and what it is about it that gets you.</p>
+    <textarea id="q1" placeholder="e.g. the way he remembers small things I mention offhand..."></textarea>
+    <div class="nav"><button class="ghost" onclick="goTo(3)">Back</button><button class="primary" onclick="goTo(5)">Next</button></div>
+  </div>
+
+  <div id="screen-5" class="screen">
+    <div class="steps" id="steps5"></div>
+    <p class="eyebrow">Question 2 of 4</p>
+    <h1 style="font-size:1.25rem;">How would you want Hung to spice things up between you two?</h1>
+    <p class="lede">Be specific — gestures, plans, energy, anything.</p>
+    <textarea id="q2" placeholder="Your honest wishlist..."></textarea>
+    <div class="nav"><button class="ghost" onclick="goTo(4)">Back</button><button class="primary" onclick="goTo(6)">Next</button></div>
+  </div>
+
+  <div id="screen-6" class="screen">
+    <div class="steps" id="steps6"></div>
+    <p class="eyebrow">Question 3 of 4</p>
+    <h1 style="font-size:1.25rem;">Has Hung ever given you the ick?</h1>
+    <p class="lede">No judgment — this is how he gets better.</p>
+    <textarea id="q3" placeholder="Be honest, even if it stings a little..."></textarea>
+    <div class="nav"><button class="ghost" onclick="goTo(5)">Back</button><button class="primary" onclick="goTo(7)">Next</button></div>
+  </div>
+
+  <div id="screen-7" class="screen">
+    <div class="steps" id="steps7"></div>
+    <p class="eyebrow">Question 4 of 4</p>
+    <h1 style="font-size:1.25rem;">Where do you hope this connection goes from here?</h1>
+    <p class="lede">You two have been dropping hints at each other — say the quiet part.</p>
+    <textarea id="q4" placeholder="What you're hoping for..."></textarea>
+    <div class="nav"><button class="ghost" onclick="goTo(6)">Back</button><button class="primary" onclick="goTo(8)">Next</button></div>
+  </div>
+
+  <div id="screen-8" class="screen">
+    <div class="steps" id="steps8"></div>
+    <p class="eyebrow">Question 5 of 5 · a bonus one</p>
+    <h1 style="font-size:1.25rem;">Is there anything about you Hung doesn't fully see yet?</h1>
+    <p class="lede">Something you wish he understood, asked about, or noticed — that never quite found its moment.</p>
+    <textarea id="q5" placeholder="Whatever hasn't had a moment yet..."></textarea>
+    <div class="nav"><button class="ghost" onclick="goTo(7)">Back</button><button class="primary" onclick="finish()">Submit</button></div>
+  </div>
+
+  <div id="screen-9" class="screen">
+    <p class="eyebrow">Done</p>
+    <h1>Thank you for spending your time on this, Houria.</h1>
+    <p class="lede">I hope the rest of your day is just as lovely as you are. Your answers should be downloading as a text file now — or just tap below to send everything straight to me on WhatsApp.</p>
+    <div class="summary" id="summaryText"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+      <button class="primary" id="waBtn" onclick="sendToWhatsApp()">Gladly send to Hung</button>
+      <button class="ghost copy-btn" onclick="copySummary()">Copy instead</button>
+    </div>
+    <p class="copied" id="copiedMsg">Copied ✓</p>
+  </div>
+
+</div>
+
+<script>
+const total = 7; // riddle1..q4 + bonus
+function buildDots(n){ let h=''; for(let i=1;i<=total;i++) h+=`<div class="dot ${i<=n-1?'done':''}"></div>`; return h; }
+function goTo(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  const stepsEl = document.getElementById('steps'+n);
+  if(stepsEl) stepsEl.innerHTML = buildDots(n);
+  if(n===0) igniteWelcome();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function reveal(n){ document.getElementById('r'+n+'-answer').classList.add('shown'); }
+
+function igniteWelcome(){
+  const wrap = document.getElementById('nameWrap');
+  if(wrap.dataset.done) return;
+  wrap.dataset.done = '1';
+  const colors = ['#E4527B','#F2A6BF','#F4D48C','#C23A66','#FFFFFF'];
+  for(let i=0;i<14;i++){
+    const b = document.createElement('span');
+    b.className = 'burst';
+    b.style.setProperty('--ang', (i*(360/14))+'deg');
+    b.style.background = colors[i%colors.length];
+    wrap.appendChild(b);
+  }
+  const flowers = ['🌸','🌷','🌺','🌼'];
+  const positions = [['10%','20%'],['85%','15%'],['15%','75%'],['90%','70%'],['50%','5%']];
+  positions.forEach((p,i)=>{
+    const f = document.createElement('span');
+    f.className = 'flower';
+    f.textContent = flowers[i%flowers.length];
+    f.style.left = p[0]; f.style.top = p[1];
+    f.style.animationDelay = (0.3+i*0.08)+'s';
+    wrap.appendChild(f);
+  });
+  requestAnimationFrame(()=> setTimeout(()=> wrap.classList.add('ignite'), 150));
+}
+igniteWelcome();
+
+function finish(){
+  const q1=document.getElementById('q1').value.trim();
+  const q2=document.getElementById('q2').value.trim();
+  const q3=document.getElementById('q3').value.trim();
+  const q4=document.getElementById('q4').value.trim();
+  const q5=document.getElementById('q5').value.trim();
+  const summary =
+`What I like about Hung:
+${q1||'(not answered)'}
+
+How he could spice things up:
+${q2||'(not answered)'}
+
+Where I've felt the ick:
+${q3||'(not answered)'}
+
+Where I hope this goes:
+${q4||'(not answered)'}
+
+Something he doesn't fully see yet:
+${q5||'(not answered)'}`;
+  document.getElementById('summaryText').textContent = summary;
+  saveAnswers(summary);
+  goTo(9);
+}
+async function saveAnswers(summary){}
+function sendToWhatsApp(){
+  const text = document.getElementById('summaryText').textContent;
+  const url = 'https://wa.me/84965412992?text=' + encodeURIComponent(text);
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+async function copySummary(){
+  try{
+    await navigator.clipboard.writeText(document.getElementById('summaryText').textContent);
+    const msg = document.getElementById('copiedMsg'); msg.style.display='block';
+    setTimeout(()=>msg.style.display='none', 2000);
+  }catch(e){}
+}
+</script>
+</body>
+</html>
